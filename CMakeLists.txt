@@ -27,7 +27,14 @@ target_include_directories(meshVisual
         ${PROJECT_SOURCE_DIR}/include
 )
 
-# Basic warnings
+find_package(glfw3 3.4 REQUIRED CONFIG)
+
+target_link_libraries(meshVisual
+    PRIVATE 
+        glfw
+)
+
+
 if(MSVC)
     target_compile_options(meshVisual PRIVATE /W4)
 else()

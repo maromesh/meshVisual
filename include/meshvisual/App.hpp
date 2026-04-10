@@ -1,9 +1,11 @@
 #pragma once
 
+#include "meshvisual/core/Window.hpp"
+
 class App {
 public:
     int run();
 
 private:
-    bool m_running {true};
+    Window m_window;
 };

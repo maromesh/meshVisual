@@ -2,16 +2,16 @@
 #include <iostream>
 
 int App::run() {
-    int frameCount = 0;
-
-    while (m_running) {
-        ++frameCount;
-        std::cout << "Frame: " << frameCount << "\n";
-
-        if (frameCount >= 1) {
-            m_running = false;
-        }
+    const bool created = m_window.create("meshVisual", 1280, 720);
+    if (!created) {
+        return 1;
     }
 
+    while (m_window.isOpen()) {
+        m_window.pollEvents();
+        m_window.swapBuffers();
+    }
+
+    m_window.destroy();
     return 0;
 }
