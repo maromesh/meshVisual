@@ -1,5 +1,6 @@
 #pragma once
 
+#include "meshvisual/core/Renderer.hpp"
 #include "meshvisual/core/Window.hpp"
 
 class App {
@@ -8,4 +9,5 @@ public:
 
 private:
     Window m_window;
+    Renderer m_renderer;
 };

@@ -16,7 +16,7 @@ bool Window::create(const std::string& title, int width, int height) {
         return false;
     }
 
-    m_glfwInitialised = true;
+    m_glfwInitialized = true;
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -63,9 +63,9 @@ void Window::destroy() {
         m_window = nullptr;
     }
 
-    if (m_glfwInitialised) {
+    if (m_glfwInitialized) {
         glfwTerminate();
-        m_glfwInitialised = false;
+        m_glfwInitialized = false;
     }
 
     m_width = 0;
@@ -91,4 +91,26 @@ const std::string& Window::title() const {
 
 GLFWwindow* Window::nativeHandle() const{
     return m_window;
+}
+
+int Window::framebufferWidth() const {
+    if (m_window == nullptr) {
+        return 0;
+    }
+
+    int framebufferWidth = 0;
+    int framebufferHeight = 0;
+    glfwGetFramebufferSize(m_window, &framebufferWidth, &framebufferHeight);
+    return framebufferWidth;
+}
+
+int Window::framebufferHeight() const {
+    if (m_window == nullptr) {
+        return 0;
+    }
+
+    int framebufferWidth = 0;
+    int framebufferHeight = 0;
+    glfwGetFramebufferSize(m_window, &framebufferWidth, &framebufferHeight);
+    return framebufferHeight;
 }

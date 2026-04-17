@@ -28,10 +28,12 @@ target_include_directories(meshVisual
 )
 
 find_package(glfw3 3.4 REQUIRED CONFIG)
+find_package(OpenGL REQUIRED)
 
 target_link_libraries(meshVisual
     PRIVATE 
         glfw
+        OpenGL::GL
 )
 
 

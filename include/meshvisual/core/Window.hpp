@@ -24,14 +24,15 @@ public:
     [[nodiscard]] bool isOpen() const;
     [[nodiscard]] int width() const;
     [[nodiscard]] int height() const;
+    [[nodiscard]] int framebufferWidth() const;
+    [[nodiscard]] int framebufferHeight() const;
     [[nodiscard]] const std::string& title() const;
     [[nodiscard]] GLFWwindow* nativeHandle() const;
 
 private:
     GLFWwindow* m_window {nullptr};
-    bool m_isOpen {false};
     int m_width {0};
     int m_height {0};
     std::string m_title {};
-    bool m_glfwInitialised {false};
+    bool m_glfwInitialized {false};
 };
