@@ -10,7 +10,6 @@
   "pointSize": 15.0,
   "lineWidth": 1.0,
 
-
   "pointDensity": 0.0001,
   "maxConnectionDistance": 450.0,
   "maxNeighborsPerNode": 3,
@@ -25,6 +24,7 @@
   "minSpeed": 10.0,
   "maxSpeed": 15.0,
 
+  "shapesEnabled": false,
   "minShapeViewportAreaFraction": 0.025,
   "maxShapeViewportAreaFraction": 0.05,
   "shapeAttractionStrength": 80.0,

@@ -58,6 +58,16 @@ std::optional<std::string> parseStringValue(const std::string& content, const st
     return match[1].str();
 }
 
+std::optional<bool> parseBoolValue(const std::string& content, const std::string& key) {
+    const std::regex pattern("\"" + key + "\"\\s*:\\s*(true|false)");
+    std::smatch match;
+    if (!std::regex_search(content, match, pattern)) {
+        return std::nullopt;
+    }
+
+    return match[1].str() == "true";
+}
+
 std::optional<ColorRgba> parseHexColor(const std::string& value) {
     if (value.size() != 7U && value.size() != 9U) {
         return std::nullopt;
@@ -116,6 +126,9 @@ AppSettings Settings::loadAppSettings(const std::string& path) {
     }
     if (const auto value = parseFloatValue(content, "lineWidth")) {
         settings.lineWidth = *value;
+    }
+    if (const auto value = parseBoolValue(content, "shapesEnabled")) {
+        settings.shapesEnabled = *value;
     }
     if (const auto value = parseStringValue(content, "backgroundColor")) {
         if (const auto color = parseHexColor(*value)) {
