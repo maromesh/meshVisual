@@ -14,6 +14,7 @@ endif()
 add_executable(meshVisual
     src/main.cpp
     src/App.cpp
+    src/core/Settings.cpp
     src/core/Window.cpp
     src/core/Renderer.cpp
     src/graph/Node.cpp

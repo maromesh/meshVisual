@@ -10,6 +10,12 @@ public:
     void addNode(const Node& node);
     void addEdge(const Edge& edge);
     void clearEdges();
+    void removeEdgesForNode(int nodeId);
+    void fadeOutEdgesForNode(int nodeId, float fadeDurationSeconds);
+    void fadeOutEdgeBetween(int firstNodeId, int secondNodeId, float fadeDurationSeconds);
+    void updateEdgeTransitions(float deltaSeconds);
+    [[nodiscard]] bool hasEdgeBetween(int firstNodeId, int secondNodeId) const;
+    [[nodiscard]] std::size_t activeEdgeCountForNode(int nodeId) const;
 
     [[nodiscard]] std::vector<Node>& nodes();
     [[nodiscard]] const std::vector<Node>& nodes() const;

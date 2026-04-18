@@ -3,11 +3,15 @@
 #include <algorithm>
 #include <cmath>
 #include <chrono>
+#include <numeric>
 #include <unordered_map>
 #include <vector>
 
 int App::run() {
-    const bool windowCreated = m_window.create("meshVisual", 1280, 720);
+    m_settings = Settings::loadAppSettings("config/settings.json");
+    m_generationConfig = m_settings.graph;
+
+    const bool windowCreated = m_window.create("meshVisual", m_settings.windowWidth, m_settings.windowHeight);
     if (!windowCreated) {
         return 1;
     }
@@ -17,7 +21,7 @@ int App::run() {
         return 1;
     }
 
-    m_generationConfig = createGenerationConfig();
+    m_renderer.configure(m_settings);
     m_graph = m_graphGenerator.createRandomGraph(m_generationConfig);
     m_lastFrameTime = std::chrono::steady_clock::now();
 
@@ -41,7 +45,12 @@ int App::run() {
             m_window.framebufferWidth(),
             m_window.framebufferHeight()
         );
-        m_renderer.clear(0.10f, 0.00f, 0.05f, 1.0f);
+        m_renderer.clear(
+            m_settings.backgroundColor.red,
+            m_settings.backgroundColor.green,
+            m_settings.backgroundColor.blue,
+            m_settings.backgroundColor.alpha
+        );
         m_renderer.drawLines();
         m_renderer.drawPoints();
 
@@ -50,18 +59,6 @@ int App::run() {
 
     m_window.destroy();
     return 0;
-}
-
-GraphGenerationConfig App::createGenerationConfig() const {
-    GraphGenerationConfig config;
-    config.worldWidth = 4800.0f;
-    config.worldHeight = 3200.0f;
-    config.pointDensity = 0.00002f;
-    config.maxConnectionDistance = 260.0f;
-    config.maxNeighborsPerNode = 3;
-    config.minSpeed = 12.0f;
-    config.maxSpeed = 26.0f;
-    return config;
 }
 
 App::Viewport App::currentViewport() const {
@@ -84,32 +81,73 @@ void App::updateSimulation(float deltaSeconds) {
         return;
     }
 
-    bool wrappedNode = false;
+    m_edgeRefreshAccumulator += deltaSeconds;
 
     for (Node& node : m_graph.nodes()) {
+        bool wrapped = false;
+
         node.x += node.velocityX * deltaSeconds;
         node.y += node.velocityY * deltaSeconds;
 
         if (node.x < 0.0f) {
             node.x += m_generationConfig.worldWidth;
-            wrappedNode = true;
+            wrapped = true;
         } else if (node.x > m_generationConfig.worldWidth) {
             node.x -= m_generationConfig.worldWidth;
-            wrappedNode = true;
+            wrapped = true;
         }
 
         if (node.y < 0.0f) {
             node.y += m_generationConfig.worldHeight;
-            wrappedNode = true;
+            wrapped = true;
         } else if (node.y > m_generationConfig.worldHeight) {
             node.y -= m_generationConfig.worldHeight;
-            wrappedNode = true;
+            wrapped = true;
+        }
+
+        if (wrapped) {
+            m_graph.removeEdgesForNode(node.id);
+            m_graphGenerator.refreshEdgesForNode(m_graph, m_generationConfig, node.id);
         }
     }
 
-    if (wrappedNode) {
-        m_graphGenerator.rebuildEdges(m_graph, m_generationConfig);
+    if (m_edgeRefreshAccumulator >= std::max(0.1f, m_generationConfig.edgeRefreshIntervalSeconds)) {
+        m_edgeRefreshAccumulator = 0.0f;
+        refreshRandomNodeSubset();
     }
+
+    m_graph.updateEdgeTransitions(deltaSeconds);
+}
+
+void App::refreshRandomNodeSubset() {
+    const std::size_t batchSize = nodeRefreshBatchSize();
+    if (batchSize == 0U) {
+        return;
+    }
+
+    std::vector<int> nodeIds;
+    nodeIds.reserve(m_graph.nodes().size());
+    for (const Node& node : m_graph.nodes()) {
+        nodeIds.push_back(node.id);
+    }
+
+    std::shuffle(nodeIds.begin(), nodeIds.end(), m_randomGenerator);
+    const std::size_t refreshCount = std::min(batchSize, nodeIds.size());
+
+    for (std::size_t index = 0; index < refreshCount; ++index) {
+        m_graphGenerator.refreshEdgesForNode(m_graph, m_generationConfig, nodeIds[index]);
+    }
+}
+
+std::size_t App::nodeRefreshBatchSize() const {
+    const std::size_t nodeCount = m_graph.nodes().size();
+    if (nodeCount == 0U) {
+        return 0U;
+    }
+
+    const float clampedFraction = std::clamp(m_generationConfig.edgeRefreshBatchFraction, 0.0f, 1.0f);
+    const std::size_t batchSize = static_cast<std::size_t>(std::ceil(static_cast<float>(nodeCount) * clampedFraction));
+    return std::max<std::size_t>(1U, batchSize);
 }
 
 std::vector<float> App::buildLineVertices(const Viewport& viewport) const {
@@ -121,9 +159,13 @@ std::vector<float> App::buildLineVertices(const Viewport& viewport) const {
     }
 
     std::vector<float> lineVertices;
-    lineVertices.reserve(m_graph.edges().size() * 4U);
+    lineVertices.reserve(m_graph.edges().size() * 6U);
 
     for (const Edge& edge : m_graph.edges()) {
+        if (edge.alpha <= 0.0001f) {
+            continue;
+        }
+
         const auto sourceIt = nodesById.find(edge.sourceId);
         const auto targetIt = nodesById.find(edge.targetId);
         if (sourceIt == nodesById.end() || targetIt == nodesById.end()) {
@@ -132,8 +174,10 @@ std::vector<float> App::buildLineVertices(const Viewport& viewport) const {
 
         lineVertices.push_back(worldToClipX(sourceIt->second->x, viewport));
         lineVertices.push_back(worldToClipY(sourceIt->second->y, viewport));
+        lineVertices.push_back(edge.alpha);
         lineVertices.push_back(worldToClipX(targetIt->second->x, viewport));
         lineVertices.push_back(worldToClipY(targetIt->second->y, viewport));
+        lineVertices.push_back(edge.alpha);
     }
 
     return lineVertices;

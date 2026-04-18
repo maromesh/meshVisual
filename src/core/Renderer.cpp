@@ -12,39 +12,55 @@ constexpr const char* kPointVertexShaderSource = R"(
 
 layout (location = 0) in vec2 aPosition;
 
+uniform float uPointSize;
+
 void main() {
     gl_Position = vec4(aPosition, 0.0, 1.0);
-    gl_PointSize = 10.0;
+    gl_PointSize = uPointSize;
 }
 )";
 
 constexpr const char* kPointFragmentShaderSource = R"(
 #version 330 core
 
+uniform vec4 uPointColor;
+
 out vec4 fragColor;
 
 void main() {
-    fragColor = vec4(0.90, 0.95, 1.00, 1.0);
+    vec2 centeredPointCoord = (gl_PointCoord * 2.0) - vec2(1.0);
+    if (dot(centeredPointCoord, centeredPointCoord) > 1.0) {
+        discard;
+    }
+
+    fragColor = uPointColor;
 }
 )";
 
 constexpr const char* kLineVertexShaderSource = R"(
 #version 330 core
 
-layout (location = 0) in vec2 aPosition;
+layout (location = 0) in vec3 aLineVertex;
+
+out float vAlpha;
 
 void main() {
-    gl_Position = vec4(aPosition, 0.0, 1.0);
+    gl_Position = vec4(aLineVertex.xy, 0.0, 1.0);
+    vAlpha = aLineVertex.z;
 }
 )";
 
 constexpr const char* kLineFragmentShaderSource = R"(
 #version 330 core
 
+in float vAlpha;
+
+uniform vec4 uEdgeColor;
+
 out vec4 fragColor;
 
 void main() {
-    fragColor = vec4(0.35, 0.70, 0.95, 1.0);
+    fragColor = vec4(uEdgeColor.rgb, uEdgeColor.a * vAlpha);
 }
 )";
 }
@@ -59,6 +75,8 @@ bool Renderer::initialize() {
     }
 
     glEnable(GL_PROGRAM_POINT_SIZE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (!createLinePipeline() || !createPointPipeline()) {
         destroy();
@@ -67,6 +85,13 @@ bool Renderer::initialize() {
 
     m_initialized = true;
     return true;
+}
+
+void Renderer::configure(const AppSettings& settings) {
+    m_pointSize = settings.pointSize;
+    m_lineWidth = settings.lineWidth;
+    m_pointColor = settings.pointColor;
+    m_edgeColor = settings.edgeColor;
 }
 
 void Renderer::beginFrame(int width, int height) {
@@ -84,6 +109,11 @@ void Renderer::drawLines() {
     }
 
     glUseProgram(m_lineProgram);
+    glLineWidth(m_lineWidth);
+    const int edgeColorLocation = glGetUniformLocation(m_lineProgram, "uEdgeColor");
+    if (edgeColorLocation >= 0) {
+        glUniform4f(edgeColorLocation, m_edgeColor.red, m_edgeColor.green, m_edgeColor.blue, m_edgeColor.alpha);
+    }
     glBindVertexArray(m_lineVao);
     glDrawArrays(GL_LINES, 0, m_lineVertexCount);
     glBindVertexArray(0);
@@ -96,6 +126,14 @@ void Renderer::drawPoints() {
     }
 
     glUseProgram(m_pointProgram);
+    const int pointSizeLocation = glGetUniformLocation(m_pointProgram, "uPointSize");
+    if (pointSizeLocation >= 0) {
+        glUniform1f(pointSizeLocation, m_pointSize);
+    }
+    const int pointColorLocation = glGetUniformLocation(m_pointProgram, "uPointColor");
+    if (pointColorLocation >= 0) {
+        glUniform4f(pointColorLocation, m_pointColor.red, m_pointColor.green, m_pointColor.blue, m_pointColor.alpha);
+    }
     glBindVertexArray(m_pointVao);
     glDrawArrays(GL_POINTS, 0, m_pointCount);
     glBindVertexArray(0);
@@ -116,7 +154,7 @@ void Renderer::uploadLines(std::span<const float> lineVertices) {
     );
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    m_lineVertexCount = static_cast<int>(lineVertices.size() / 2U);
+    m_lineVertexCount = static_cast<int>(lineVertices.size() / 3U);
 }
 
 void Renderer::uploadPoints(std::span<const float> pointVertices) {
@@ -303,10 +341,10 @@ bool Renderer::createLinePipeline() {
 
     glVertexAttribPointer(
         0,
-        2,
+        3,
         GL_FLOAT,
         GL_FALSE,
-        static_cast<GLsizei>(2 * sizeof(float)),
+        static_cast<GLsizei>(3 * sizeof(float)),
         nullptr
     );
     glEnableVertexAttribArray(0);

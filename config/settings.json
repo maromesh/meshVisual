@@ -1,0 +1,26 @@
+{
+  "windowWidth": 1280,
+  "windowHeight": 720,
+  "backgroundColor": "#20071a",
+  "pointColor": "#898f92",
+  "edgeColor": "#8ec5ec",
+  "pointSize": 10.0,
+  "lineWidth": 1.0,
+
+  "worldWidth": 2560.0,
+  "worldHeight": 1440.0,
+
+  "pointDensity": 0.00005,
+  "maxConnectionDistance": 450.0,
+  "maxNeighborsPerNode": 4,
+  "maxEdgeChangesPerRefresh": 4,
+
+  "edgeRefreshIntervalSeconds": 1.5,
+  "edgeRefreshBatchFraction": 0.10,
+
+  "minEdgeFadeDurationSeconds": 0.0,
+  "maxEdgeFadeDurationSeconds": 5.0,
+
+  "minSpeed": 10.0,
+  "maxSpeed": 15.0
+}
