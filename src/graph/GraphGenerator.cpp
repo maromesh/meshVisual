@@ -100,6 +100,8 @@ Graph GraphGenerator::createRandomGraph(const GraphGenerationConfig& config) con
             .y = yDistribution(generator),
             .velocityX = std::cos(angle) * speed,
             .velocityY = std::sin(angle) * speed,
+            .driftVelocityX = std::cos(angle) * speed,
+            .driftVelocityY = std::sin(angle) * speed,
         });
     }
 

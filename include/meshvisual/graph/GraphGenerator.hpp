@@ -18,6 +18,17 @@ struct GraphGenerationConfig {
     float maxEdgeFadeDurationSeconds {0.8f};
     float minSpeed {10.0f};
     float maxSpeed {28.0f};
+    float minShapeViewportAreaFraction {0.02f};
+    float maxShapeViewportAreaFraction {0.08f};
+    float shapeAttractionStrength {5.0f};
+    float shapeCaptureRadius {24.0f};
+    float minShapeLifetimeSeconds {8.0f};
+    float maxShapeLifetimeSeconds {14.0f};
+    float minShapeSpawnIntervalSeconds {10.0f};
+    float maxShapeSpawnIntervalSeconds {18.0f};
+    float minShapeSpeed {4.0f};
+    float maxShapeSpeed {9.0f};
+    std::size_t maxConcurrentShapes {1};
 };
 
 class GraphGenerator {

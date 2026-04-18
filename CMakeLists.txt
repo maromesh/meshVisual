@@ -21,6 +21,8 @@ add_executable(meshVisual
     src/graph/Edge.cpp
     src/graph/Graph.cpp
     src/graph/GraphGenerator.cpp
+    src/graph/Shape.cpp
+    src/simulation/NetworkAnimator.cpp
 )
 
 target_include_directories(meshVisual

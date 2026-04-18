@@ -5,6 +5,7 @@
 #include "meshvisual/core/Window.hpp"
 #include "meshvisual/graph/Graph.hpp"
 #include "meshvisual/graph/GraphGenerator.hpp"
+#include "meshvisual/simulation/NetworkAnimator.hpp"
 
 #include <chrono>
 #include <random>
@@ -35,6 +36,7 @@ private:
     Window m_window;
     Renderer m_renderer;
     GraphGenerator m_graphGenerator;
+    NetworkAnimator m_networkAnimator;
     Graph m_graph;
     AppSettings m_settings;
     GraphGenerationConfig m_generationConfig;

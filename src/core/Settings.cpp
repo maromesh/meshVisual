@@ -1,7 +1,6 @@
 #include "meshvisual/core/Settings.hpp"
 
 #include <fstream>
-#include <iomanip>
 #include <optional>
 #include <regex>
 #include <sstream>
@@ -168,6 +167,39 @@ AppSettings Settings::loadAppSettings(const std::string& path) {
     }
     if (const auto value = parseFloatValue(content, "maxSpeed")) {
         config.maxSpeed = *value;
+    }
+    if (const auto value = parseFloatValue(content, "minShapeViewportAreaFraction")) {
+        config.minShapeViewportAreaFraction = *value;
+    }
+    if (const auto value = parseFloatValue(content, "maxShapeViewportAreaFraction")) {
+        config.maxShapeViewportAreaFraction = *value;
+    }
+    if (const auto value = parseFloatValue(content, "shapeAttractionStrength")) {
+        config.shapeAttractionStrength = *value;
+    }
+    if (const auto value = parseFloatValue(content, "shapeCaptureRadius")) {
+        config.shapeCaptureRadius = *value;
+    }
+    if (const auto value = parseFloatValue(content, "minShapeLifetimeSeconds")) {
+        config.minShapeLifetimeSeconds = *value;
+    }
+    if (const auto value = parseFloatValue(content, "maxShapeLifetimeSeconds")) {
+        config.maxShapeLifetimeSeconds = *value;
+    }
+    if (const auto value = parseFloatValue(content, "minShapeSpawnIntervalSeconds")) {
+        config.minShapeSpawnIntervalSeconds = *value;
+    }
+    if (const auto value = parseFloatValue(content, "maxShapeSpawnIntervalSeconds")) {
+        config.maxShapeSpawnIntervalSeconds = *value;
+    }
+    if (const auto value = parseFloatValue(content, "minShapeSpeed")) {
+        config.minShapeSpeed = *value;
+    }
+    if (const auto value = parseFloatValue(content, "maxShapeSpeed")) {
+        config.maxShapeSpeed = *value;
+    }
+    if (const auto value = parseSizeValue(content, "maxConcurrentShapes")) {
+        config.maxConcurrentShapes = *value;
     }
 
     return settings;

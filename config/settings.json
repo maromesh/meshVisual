@@ -1,18 +1,19 @@
 {
+  "worldWidth": 1920,
+  "worldHeight": 1080,
   "windowWidth": 1280,
   "windowHeight": 720,
-  "backgroundColor": "#20071a",
-  "pointColor": "#898f92",
-  "edgeColor": "#8ec5ec",
-  "pointSize": 10.0,
+
+  "backgroundColor": "#000000",
+  "pointColor": "#b8c1c5",
+  "edgeColor": "#e8df3a",
+  "pointSize": 15.0,
   "lineWidth": 1.0,
 
-  "worldWidth": 2560.0,
-  "worldHeight": 1440.0,
 
-  "pointDensity": 0.00005,
+  "pointDensity": 0.0001,
   "maxConnectionDistance": 450.0,
-  "maxNeighborsPerNode": 4,
+  "maxNeighborsPerNode": 3,
   "maxEdgeChangesPerRefresh": 4,
 
   "edgeRefreshIntervalSeconds": 1.5,
@@ -22,5 +23,17 @@
   "maxEdgeFadeDurationSeconds": 5.0,
 
   "minSpeed": 10.0,
-  "maxSpeed": 15.0
+  "maxSpeed": 15.0,
+
+  "minShapeViewportAreaFraction": 0.025,
+  "maxShapeViewportAreaFraction": 0.05,
+  "shapeAttractionStrength": 80.0,
+  "shapeCaptureRadius": 2.0,
+  "minShapeLifetimeSeconds": 20.0,
+  "maxShapeLifetimeSeconds": 40.0,
+  "minShapeSpawnIntervalSeconds": 5.0,
+  "maxShapeSpawnIntervalSeconds": 20.0,
+  "minShapeSpeed": 10.0,
+  "maxShapeSpeed": 30.0,
+  "maxConcurrentShapes": 6
 }

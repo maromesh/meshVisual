@@ -2,7 +2,6 @@
 
 #include "meshvisual/graph/GraphGenerator.hpp"
 
-#include <array>
 #include <string>
 
 struct ColorRgba {

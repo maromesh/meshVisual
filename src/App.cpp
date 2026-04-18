@@ -23,6 +23,7 @@ int App::run() {
 
     m_renderer.configure(m_settings);
     m_graph = m_graphGenerator.createRandomGraph(m_generationConfig);
+    m_networkAnimator.loadShapes("assets/shapes");
     m_lastFrameTime = std::chrono::steady_clock::now();
 
     while (m_window.isOpen()) {
@@ -82,8 +83,14 @@ void App::updateSimulation(float deltaSeconds) {
     }
 
     m_edgeRefreshAccumulator += deltaSeconds;
+    const Viewport viewport = currentViewport();
+    m_networkAnimator.update(m_graph, m_generationConfig, viewport.width, viewport.height, deltaSeconds);
 
     for (Node& node : m_graph.nodes()) {
+        if (node.attachedToShape) {
+            continue;
+        }
+
         bool wrapped = false;
 
         node.x += node.velocityX * deltaSeconds;
