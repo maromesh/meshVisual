@@ -25,7 +25,17 @@ add_executable(meshVisual
     src/simulation/NetworkAnimator.cpp
 )
 
+add_executable(shape_editor
+    tools/shape_editor.cpp
+    src/core/Window.cpp
+)
+
 target_include_directories(meshVisual
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+
+target_include_directories(shape_editor
     PRIVATE
         ${PROJECT_SOURCE_DIR}/include
 )
@@ -39,9 +49,21 @@ target_link_libraries(meshVisual
         OpenGL::GL
 )
 
+target_link_libraries(shape_editor
+    PRIVATE
+        glfw
+        OpenGL::GL
+)
+
 
 if(MSVC)
     target_compile_options(meshVisual PRIVATE /W4)
+    target_compile_options(shape_editor PRIVATE /W4)
 else()
     target_compile_options(meshVisual PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(shape_editor PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+if(APPLE)
+    target_compile_definitions(shape_editor PRIVATE GL_SILENCE_DEPRECATION)
 endif()

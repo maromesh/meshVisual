@@ -5,8 +5,8 @@
   "windowHeight": 720,
 
   "backgroundColor": "#000000",
-  "pointColor": "#b8c1c5",
-  "edgeColor": "#e8df3a",
+  "pointColor": "#00eeff",
+  "edgeColor": "#ababab",
   "pointSize": 15.0,
   "lineWidth": 1.0,
 
@@ -15,7 +15,7 @@
   "maxNeighborsPerNode": 3,
   "maxEdgeChangesPerRefresh": 4,
 
-  "edgeRefreshIntervalSeconds": 1.5,
+  "edgeRefreshIntervalSeconds": 1.0,
   "edgeRefreshBatchFraction": 0.10,
 
   "minEdgeFadeDurationSeconds": 0.0,
@@ -24,7 +24,7 @@
   "minSpeed": 10.0,
   "maxSpeed": 15.0,
 
-  "shapesEnabled": false,
+  "shapesEnabled": true,
   "minShapeViewportAreaFraction": 0.025,
   "maxShapeViewportAreaFraction": 0.05,
   "shapeAttractionStrength": 80.0,
@@ -33,7 +33,7 @@
   "maxShapeLifetimeSeconds": 40.0,
   "minShapeSpawnIntervalSeconds": 5.0,
   "maxShapeSpawnIntervalSeconds": 20.0,
-  "minShapeSpeed": 10.0,
-  "maxShapeSpeed": 30.0,
+  "minShapeSpeed": 30.0,
+  "maxShapeSpeed": 50.0,
   "maxConcurrentShapes": 6
 }
