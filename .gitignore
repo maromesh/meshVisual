@@ -35,3 +35,6 @@ CPackSourceConfig.cmake
 
 # Windows
 Thumbs.db
+
+# plan
+agents.md
